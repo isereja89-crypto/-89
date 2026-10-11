@@ -1,54 +1,8 @@
-
-Сформированное изображение: Космическая викторина: Угадай фильм
-
-
-
-Погнали 😎
-
-Шаг 5 — создаём стили приложения
-Add file → Create new file
-
-Имя:
-
-app/src/main/res/values/styles.xml
-
-Вставь:
-
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <style name="Theme.UgadaiFilm" parent="android:style/Theme.Material.NoActionBar">
-        <item name="android:fontFamily">sans</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">#0B0B0F</item>
-        <item name="android:navigationBarColor">#0B0B0F</item>
-        <item name="android:colorAccent">#FFB000</item>
-    </style>
-
-</resources>
-Нажми Commit changes.
-
-После этого напиши «готово» — и начнём самое интересное: сам MainActivity.kt, то есть игровую логику 🎬🔥
-
-
-Готов
-
-Отлично 🔥 Теперь самое главное.
-
-Шаг 6 — создаём MainActivity.kt
-Это будет сам экран игры и вся основная логика.
-
-Создай файл:
-
-app/src/main/java/com/example/ugadaifilm/MainActivity.kt
-
-И вставь туда весь код ниже:
-
 package com.example.ugadaifilm
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.graphics.Color
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -56,87 +10,73 @@ import androidx.appcompat.app.AppCompatActivity
 
 data class Movie(
     val title: String,
-    val category: String,
     val clues: List<String>
 )
 
 class MainActivity : AppCompatActivity() {
 
     private val movies = listOf(
-        Movie("Титаник", "Мелодрамы", listOf("🚢 Пассажирский корабль", "❤️ Влюблённая пара", "🧊 Огромный айсберг")),
-        Movie("Матрица", "Фантастика", listOf("💊 Две загадочные таблетки", "🕶️ Человек в чёрных очках", "💻 Необычная виртуальная реальность")),
-        Movie("Один дома", "Комедии", listOf("🏠 Большой пустой дом", "🎄 Рождество", "🧑‍🦱 Мальчик против грабителей")),
-        Movie("Назад в будущее", "Фантастика", listOf("🚗 Спортивная машина", "⚡ Молния", "⏰ Путешествие во времени")),
-        Movie("Интерстеллар", "Фантастика", listOf("🚀 Космический корабль", "🌌 Чёрная дыра", "👨‍🚀 Путешествие сквозь космос")),
-        Movie("Бриллиантовая рука", "Комедии", listOf("💎 Драгоценности", "🧳 Чемодан", "🇷🇺 Советская комедия")),
-        Movie("Иван Васильевич меняет профессию", "Комедии", listOf("👑 Царь", "⏳ Машина времени", "🏰 Средневековая Русь")),
-        Movie("Кавказская пленница", "Комедии", listOf("🏔️ Кавказские горы", "💍 Похищенная девушка", "🍷 Весёлая компания")),
-        Movie("Зелёная миля", "Драмы", listOf("⚡ Электрический стул", "🚶 Тюремный коридор", "🧔 Очень необычный заключённый")),
-        Movie("Челюсти", "Ужасы", listOf("🌊 Океан", "🩸 Опасность в воде", "🦈 Огромная акула"))
+        Movie("Титаник", listOf("🚢 Пассажирский корабль", "❤️ Влюблённая пара", "🧊 Огромный айсберг")),
+        Movie("Матрица", listOf("💊 Две загадочные таблетки", "🕶️ Человек в чёрных очках", "💻 Цифровой мир")),
+        Movie("Один дома", listOf("🏠 Большой дом", "👦 Мальчик один", "🪤 Ловушки для грабителей")),
+        Movie("Назад в будущее", listOf("🚗 Спортивная машина", "⚡ Молния", "⏰ Путешествие во времени")),
+        Movie("Интерстеллар", listOf("🚀 Космический корабль", "🌌 Далёкий космос", "🕳️ Чёрная дыра")),
+        Movie("Бриллиантовая рука", listOf("💎 Драгоценности", "🩹 Загипсованная рука", "🇷🇺 Советский курорт")),
+        Movie("Иван Васильевич меняет профессию", listOf("👑 Царь", "⏳ Машина времени", "🏰 Средневековая Русь")),
+        Movie("Кавказская пленница", listOf("🏔️ Кавказские горы", "👩 Девушка", "💍 Похищение невесты")),
+        Movie("Зелёная миля", listOf("🚪 Тюремный коридор", "⚡ Электрический стул", "🟢 Зелёная дорожка")),
+        Movie("Челюсти", listOf("🌊 Океан", "🏖️ Пляж", "🦈 Огромная акула"))
     )
 
     private var currentMovie: Movie? = null
-    private var clueIndex = 0
+    private var clueNumber = 0
     private var score = 0
     private var streak = 0
-    private var bestScore = 0
-    private var bestStreak = 0
     private var round = 0
-    private var timer: CountDownTimer? = null
+    private var timeLeft = 20
 
-    private lateinit var titleText: TextView
-    private lateinit var scoreText: TextView
-    private lateinit var streakText: TextView
-    private lateinit var timerText: TextView
     private lateinit var clueText: TextView
     private lateinit var answerInput: EditText
-    private lateinit var answerButton: Button
+    private lateinit var checkButton: Button
     private lateinit var nextClueButton: Button
+    private lateinit var scoreText: TextView
+    private lateinit var timerText: TextView
+    private lateinit var streakText: TextView
+    private lateinit var roundText: TextView
+
+    private var timer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        showGameScreen()
-        startRound()
+        createInterface()
+        startGame()
     }
 
-    private fun showGameScreen() {
+    private fun createInterface() {
 
         val root = LinearLayout(this)
         root.orientation = LinearLayout.VERTICAL
-        root.setPadding(24, 30, 24, 24)
-        root.setBackgroundColor(Color.rgb(11, 11, 15))
+        root.setPadding(30, 30, 30, 30)
+        root.setBackgroundColor(Color.rgb(18, 18, 22))
 
-        titleText = TextView(this)
-        titleText.text = "🎬 УГАДАЙ ФИЛЬМ"
-        titleText.textSize = 26f
-        titleText.setTextColor(Color.WHITE)
-        titleText.gravity = Gravity.CENTER
-        root.addView(titleText)
+        roundText = makeText("Раунд 1 / 10", 18)
+        timerText = makeText("⏱ 20", 22)
+        scoreText = makeText("🏆 Очки: 0", 18)
+        streakText = makeText("🔥 Серия: 0", 18)
 
-        scoreText = TextView(this)
-        scoreText.textSize = 18f
-        scoreText.setTextColor(Color.WHITE)
-        scoreText.gravity = Gravity.CENTER
+        root.addView(roundText)
+        root.addView(timerText)
         root.addView(scoreText)
-
-        streakText = TextView(this)
-        streakText.textSize = 18f
-        streakText.setTextColor(Color.rgb(255, 180, 0))
-        streakText.gravity = Gravity.CENTER
         root.addView(streakText)
 
-        timerText = TextView(this)
-        timerText.textSize = 22f
-        timerText.setTextColor(Color.WHITE)
-        timerText.gravity = Gravity.CENTER
-        root.addView(timerText)
+        clueText = makeText(
+            "Подсказка появится здесь",
+            28
+        )
 
-        clueText = TextView(this)
-        clueText.textSize = 25f
-        clueText.setTextColor(Color.WHITE)
         clueText.gravity = Gravity.CENTER
-        clueText.setPadding(10, 60, 10, 60)
+        clueText.setPadding(20, 60, 20, 60)
 
         root.addView(
             clueText,
@@ -148,86 +88,126 @@ class MainActivity : AppCompatActivity() {
         )
 
         answerInput = EditText(this)
-        answerInput.hint = "Введите название фильма"
+        answerInput.hint = "Название фильма"
         answerInput.setTextColor(Color.WHITE)
         answerInput.setHintTextColor(Color.GRAY)
-        answerInput.setSingleLine(true)
+        answerInput.textSize = 18f
+
         root.addView(answerInput)
 
-        answerButton = Button(this)
-        answerButton.text = "🎯 УГАДАТЬ"
-        root.addView(answerButton)
+        checkButton = Button(this)
+        checkButton.text = "🎬 ОТВЕТИТЬ"
+
+        root.addView(checkButton)
 
         nextClueButton = Button(this)
         nextClueButton.text = "💡 Следующая подсказка"
+
         root.addView(nextClueButton)
 
-        setContentView(root)
-
-        answerButton.setOnClickListener {
+        checkButton.setOnClickListener {
             checkAnswer()
         }
 
         nextClueButton.setOnClickListener {
             showNextClue()
         }
+
+        setContentView(root)
     }
 
-    private fun startRound() {
+    private fun makeText(text: String, size: Int): TextView {
+        val view = TextView(this)
+        view.text = text
+        view.textSize = size.toFloat()
+        view.setTextColor(Color.WHITE)
+        view.setPadding(5, 8, 5, 8)
+        return view
+    }
 
-        timer?.cancel()
+    private fun startGame() {
 
-        clueIndex = 0
+        if (round >= 10) {
+            showGameOver()
+            return
+        }
+
         currentMovie = movies.random()
+        clueNumber = 0
 
-        clueText.text = currentMovie!!.clues[0]
+        round++
+        roundText.text = "Раунд $round / 10"
 
-        answerInput.text.clear()
+        answerInput.setText("")
         answerInput.isEnabled = true
-        answerButton.isEnabled = true
+        checkButton.isEnabled = true
         nextClueButton.isEnabled = true
 
-        updateScore()
+        showClue()
 
-        timer = object : CountDownTimer(20_000, 1_000) {
+        startTimer()
+    }
 
-            override fun onTick(millisUntilFinished: Long) {
-                timerText.text = "⏱️ ${millisUntilFinished / 1000}"
-            }
+    private fun showClue() {
 
-            override fun onFinish() {
-                timerText.text = "⏰ Время вышло!"
-                failRound()
-            }
+        val movie = currentMovie ?: return
 
-        }.start()
+        clueText.text = movie.clues[clueNumber]
+
+        when (clueNumber) {
+            0 -> nextClueButton.text = "💡 Открыть подсказку 2"
+            1 -> nextClueButton.text = "💡 Открыть подсказку 3"
+            2 -> nextClueButton.text = "💡 Больше подсказок нет"
+        }
     }
 
     private fun showNextClue() {
 
-        if (clueIndex >= 2) {
+        if (clueNumber >= 2) {
+            Toast.makeText(
+                this,
+                "Это последняя подсказка!",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
-        clueIndex++
+        clueNumber++
+        showClue()
 
-        clueText.text = currentMovie!!.clues[clueIndex]
+        val points = when (clueNumber) {
+            1 -> 200
+            else -> 100
+        }
 
-        nextClueButton.text =
-            if (clueIndex == 2) "💡 Последняя подсказка"
-            else "💡 Следующая подсказка"
+        Toast.makeText(
+            this,
+            "Теперь за правильный ответ: $points очков",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun checkAnswer() {
 
-        val userAnswer = normalize(answerInput.text.toString())
-        val correctAnswer = normalize(currentMovie!!.title)
+        val movie = currentMovie ?: return
 
-        if (userAnswer == correctAnswer) {
+        val answer = normalize(answerInput.text.toString())
+        val correct = normalize(movie.title)
+
+        if (answer.isEmpty()) {
+            Toast.makeText(
+                this,
+                "Напиши название фильма",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        if (answer == correct) {
 
             timer?.cancel()
 
-            val basePoints = when (clueIndex) {
+            val basePoints = when (clueNumber) {
                 0 -> 300
                 1 -> 200
                 else -> 100
@@ -244,95 +224,122 @@ class MainActivity : AppCompatActivity() {
             }
 
             val earned = (basePoints * multiplier).toInt()
-
             score += earned
 
-            if (score > bestScore) {
-                bestScore = score
-            }
-
-            if (streak > bestStreak) {
-                bestStreak = streak
-            }
+            scoreText.text = "🏆 Очки: $score"
+            streakText.text = "🔥 Серия: $streak"
 
             Toast.makeText(
                 this,
-                "✅ Правильно! +$earned",
+                "🎉 Правильно! +$earned",
                 Toast.LENGTH_SHORT
             ).show()
 
-            updateScore()
-
-            answerInput.isEnabled = false
-            answerButton.isEnabled = false
-
-            nextClueButton.text = "➡️ Следующий фильм"
-
-            nextClueButton.setOnClickListener {
-                nextClueButton.text = "💡 Следующая подсказка"
-                nextClueButton.setOnClickListener {
-                    showNextClue()
-                }
-                startRound()
-            }
+            nextRoundAfterDelay()
 
         } else {
 
             Toast.makeText(
                 this,
-                "❌ Неверно. Можно открыть следующую подсказку.",
+                "❌ Неправильно. Можно открыть следующую подсказку.",
                 Toast.LENGTH_SHORT
             ).show()
-        }
-    }
 
-    private fun failRound() {
-
-        streak = 0
-
-        Toast.makeText(
-            this,
-            "❌ Фильм: ${currentMovie!!.title}",
-            Toast.LENGTH_LONG
-        ).show()
-
-        updateScore()
-
-        answerInput.isEnabled = false
-        answerButton.isEnabled = false
-        nextClueButton.text = "➡️ Следующий фильм"
-
-        nextClueButton.setOnClickListener {
-            nextClueButton.text = "💡 Следующая подсказка"
-            nextClueButton.setOnClickListener {
-                showNextClue()
-            }
-            startRound()
+            streak = 0
+            streakText.text = "🔥 Серия: $streak"
         }
     }
 
     private fun normalize(text: String): String {
-
         return text
             .trim()
             .lowercase()
-            .replace('ё', 'е')
+            .replace("ё", "е")
             .replace(Regex("\\s+"), " ")
     }
 
-    private fun updateScore() {
+    private fun startTimer() {
 
-        scoreText.text = "🏆 Очки: $score"
+        timer?.cancel()
 
-        streakText.text =
-            if (streak > 0)
-                "🔥 Серия: $streak"
-            else
-                "🔥 Серия: 0"
+        timeLeft = 20
+        timerText.text = "⏱ $timeLeft"
+
+        timer = object : CountDownTimer(20_000, 1_000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+
+                timeLeft = (millisUntilFinished / 1000).toInt()
+
+                timerText.text = "⏱ $timeLeft"
+            }
+
+            override fun onFinish() {
+
+                timeLeft = 0
+                timerText.text = "⏱ 0"
+
+                Toast.makeText(
+                    this@MainActivity,
+                    "⏰ Время вышло! Ответ: ${currentMovie?.title}",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                streak = 0
+                streakText.text = "🔥 Серия: 0"
+
+                nextRoundAfterDelay()
+            }
+
+        }.start()
+    }
+
+    private fun nextRoundAfterDelay() {
+
+        answerInput.isEnabled = false
+        checkButton.isEnabled = false
+        nextClueButton.isEnabled = false
+
+        android.os.Handler(mainLooper).postDelayed({
+
+            if (round >= 10) {
+                showGameOver()
+            } else {
+                startGame()
+            }
+
+        }, 1200)
+    }
+
+    private fun showGameOver() {
+
+        timer?.cancel()
+
+        clueText.text = "🏁 ИГРА ОКОНЧЕНА\n\n🏆 Итог: $score очков\n🔥 Серия: $streak"
+
+        answerInput.visibility = View.GONE
+        checkButton.visibility = View.GONE
+        nextClueButton.text = "🔄 ИГРАТЬ ЕЩЁ"
+        nextClueButton.visibility = View.VISIBLE
+        nextClueButton.isEnabled = true
+
+        nextClueButton.setOnClickListener {
+
+            score = 0
+            streak = 0
+            round = 0
+
+            scoreText.text = "🏆 Очки: 0"
+            streakText.text = "🔥 Серия: 0"
+
+            answerInput.visibility = View.VISIBLE
+            checkButton.visibility = View.VISIBLE
+
+            startGame()
+        }
     }
 
     override fun onDestroy() {
         timer?.cancel()
         super.onDestroy()
     }
-}
